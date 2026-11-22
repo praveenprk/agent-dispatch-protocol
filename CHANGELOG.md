@@ -5,8 +5,10 @@ repository since its first commit. Newest first.
 
 - **Normative history:** the spec's own Revision Log. If this file and a
   spec disagree, the spec wins (ADP-0 §3).
-- **Tag:** each version is tagged `adp-N/vX.Y.Z` on the merge commit
-  that put it on `main`, and has a GitHub Release.
+- **Tag:** each version is tagged `adp-N/vX.Y.Z` on `stable`, after the
+  maintainer merges `main` into `stable` (ADP-0 §8.2), and has a GitHub
+  Release. Tags made before ADP-0 1.2.0 sit on the merge commit that put
+  the version on `main`.
 - **Status:** every document is a Draft. Releases are marked pre-release.
 
 ## Latest
