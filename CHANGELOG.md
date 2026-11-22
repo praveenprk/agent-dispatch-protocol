@@ -53,7 +53,6 @@ dates on `main`.
 
 | Date | PR | Kind | Change | Versions |
 |------|----|------|--------|----------|
-| 2026-11-17 | #24 | Proposal | ADP-A-008 drafted: Rust reference implementation at `impl/rust/`, new Implementation class in ADP-0. | — |
 | 2026-11-17 | #23 | Docs | This changelog. Tags `adp-0/v1.0.0` … `adp-2/v2.0.1` and pre-release GitHub Releases created for every version below. | — |
 | 2026-11-17 | #22 | Apply | ADP-A-007: ADP-1 text matches its validation contract. 15 vectors (68 ADP-1), new V-13, R-12, R-13 (26 rules), R-13 in `report.schema.json`. CI self-test fixed to not depend on one defect's status. 7 defects resolved, 6 open, none high. | ADP-1 1.1.1, ADP-2 2.0.1 |
 | 2026-11-17 | #21 | Proposal | ADP-A-007 drafted and ACCEPTED, with a Scenarios table. | — |

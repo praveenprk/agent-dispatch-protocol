@@ -5,7 +5,7 @@
 | **ID**      | ADP-A-008                              |
 | **Target**  | ADP-0 (`spec/ADP-0.md`), new `impl/rust/`, `.github/workflows/adp.yml`, `README.md` |
 | **Resolves**| No defect. Addresses the need below (see Anchor) |
-| **Bump**    | ADP-0 Minor: 1.1.0 → 1.2.0. ADP-1 and ADP-2: none (Q7) |
+| **Bump**    | ADP-0 Minor: 1.2.0 → 1.3.0. ADP-1 and ADP-2: none (Q7) |
 | **Author**  | Contributor (agent-drafted, ADP-0 §8)  |
 | **Drafted** | 2026-11-17                             |
 
@@ -109,7 +109,7 @@ After: `4. **IMPLEMENTATION** — the reference implementation (§3.4) updated u
 the new directory:
 
 ```
-adp-protocol/
+agent-dispatch-protocol/
 ├── spec/
 │   ├── ADP-0.md          # this document (process)
 │   ├── ADP-1.md          # protocol specification
@@ -128,10 +128,10 @@ adp-protocol/
 └── LICENSE
 ```
 
-**C1.5: header and Revision Log.** Version `1.1.0` → `1.2.0`. Append:
+**C1.5: header and Revision Log.** Version `1.2.0` → `1.3.0`. Append:
 
 ```
-| <applied>  | 1.2.0. Implementation class (§3, §3.4);        |
+| <applied>  | 1.3.0. Implementation class (§3, §3.4);        |
 |            | precedence rule 3 covers it (§3.2); §5.4 step 4 |
 |            | names it; layout updated (§9). ADP-A-008.       |
 ```
@@ -207,9 +207,10 @@ user can always tell which spec a crate release implements.
 2. Add the `impl/rust/CHANGELOG.md` entry with its **Implements** line,
    and the row in the root `CHANGELOG.md`.
 3. Update the version map (b) in the README and `lib.rs`.
-4. Open the PR; the maintainer merges.
-5. Tag the merge commit `adp-vX.Y.Z`, push the tag by name, publish a
-   GitHub pre-release with the changelog entry.
+4. Open the PR into `main`; it merges under ADP-0 §8.1.
+5. The maintainer merges `main` into `stable`, tags `adp-vX.Y.Z` on
+   `stable`, pushes the tag by name, and publishes a GitHub pre-release
+   with the changelog entry (ADP-0 §8.2).
 
 ### C3: `.github/workflows/adp.yml`
 
@@ -256,7 +257,7 @@ assert!(verdict.is_valid());
 
 | Document | Bump | Reasoning |
 |----------|------|-----------|
-| ADP-0 | **Minor**, 1.1.0 → 1.2.0 | A new artifact class and a new duty (§3.4) are additions to the process. Nothing existing is reclassified: no file is in `impl/` today. |
+| ADP-0 | **Minor**, 1.2.0 → 1.3.0 | A new artifact class and a new duty (§3.4) are additions to the process. Nothing existing is reclassified: no file is in `impl/` today. |
 | ADP-1 | None | No text, schema or vector changes |
 | ADP-2 | None | No text, schema or vector changes |
 
@@ -305,7 +306,7 @@ vector is never edited to fit the crate.
 | Q4 | Make `implementation` a required status check? | **Yes, after stage 1 merges.** The maintainer adds it to `adp-ruleset` (a settings change, so the maintainer does it). Until then it runs but cannot block. | Accepted as sensible default (2026-11-17). | Settled as drafted. |
 | Q5 | What happens to the Python CI scripts? | **Keep them.** `check_conformance.py` is the only check of the published schemas; the others check the register and commits. Porting them is a separate proposal if wanted (A7). | Accepted as sensible default (2026-11-17). | Settled as drafted. |
 | Q6 | Class of `impl/`? | **New class Implementation: not binding, must pass every claimed vector.** (A4, A5 rejected.) | Accepted as sensible default (2026-11-17). | Settled as drafted. |
-| Q7 | Versions? | **ADP-0 1.2.0 (Minor). Crate `adp` starts at 0.1.0 on its own SemVer line, tied to the specs by C2.1: tags `adp-vX.Y.Z`, a spec → crate version map in README, docs.rs and `SPEC_VERSION` constants, a bump table for every kind of spec change, `#[non_exhaustive]` public types, and a stated MSRV policy.** One crate implements two specs (1.1.1 and 2.0.1), so one number cannot mirror both, and crate-only fixes need their own number. | Accepted as sensible default (2026-11-17), with the crate versioning made explicit (C2.1) at the maintainer's request (2026-11-18). | C2.1 added; C3 gains doc and MSRV steps. |
+| Q7 | Versions? | **ADP-0 1.3.0 (Minor). Crate `adp` starts at 0.1.0 on its own SemVer line, tied to the specs by C2.1: tags `adp-vX.Y.Z`, a spec → crate version map in README, docs.rs and `SPEC_VERSION` constants, a bump table for every kind of spec change, `#[non_exhaustive]` public types, and a stated MSRV policy.** One crate implements two specs (1.1.1 and 2.0.1), so one number cannot mirror both, and crate-only fixes need their own number. | Accepted as sensible default (2026-11-17), with the crate versioning made explicit (C2.1) at the maintainer's request (2026-11-18). | C2.1 added; C3 gains doc and MSRV steps. |
 | Q8 | Publishing and bindings (crates.io, Python, WASM, C)? | **Out of scope.** `publish = false`. Each later, as its own proposal, once the core passes every vector. | Accepted as sensible default (2026-11-17). | Settled as drafted. |
 
 ---
@@ -327,13 +328,33 @@ vector is never edited to fit the crate.
    `docs(readme): point to the Rust reference implementation — ADP-A-008`.
 6. **REGISTER:** none.
 
-After merge: tags `adp-0/v1.2.0` and `adp-v0.1.0`, each with its
-pre-release Release.
+After merge, when the maintainer releases (ADP-0 §8.2): `main` into
+`stable`, then tags `adp-0/v1.3.0` and `adp-v0.1.0` on `stable`, each
+with its pre-release Release. Stage 1 changes `.github/workflows/adp.yml`,
+so it is security-related and the maintainer merges it (ADP-0 §8.1
+rule 4).
 
 **Stage 2 (one PR):** C2 for ADP-2, crate 0.2.0 (Implements: ADP-1
 1.1.1, ADP-2 2.0.1):
 `feat(impl): add ADP-2 authority, grant and record validation — ADP-A-008`,
-with the version map, both changelogs, and tag `adp-v0.2.0` after merge.
+with the version map, both changelogs, and tag `adp-v0.2.0` on `stable`
+when the maintainer releases.
+
+---
+
+## Reconciliation (2026-11-22)
+
+At the maintainer's instruction of 2026-11-22 ("reconcile it as per
+today's truth"), before merge, this proposal was brought in line with
+what landed after its acceptance. The decision and every answer stand.
+
+| What changed since 2026-11-18 | Effect here |
+|-------------------------------|-------------|
+| ADP-A-009 took ADP-0 1.2.0 (#25, #26) | ADP-0 bump is 1.2.0 → 1.3.0 (header, C1.5, Version impact, Q7) |
+| ADP-0 §8.1: contributors merge into `main`; security-related changes are the maintainer's | Release checklist step 4; stage 1 (workflow change) is the maintainer's merge |
+| ADP-0 §8.2: releases and tags on `stable`, by the maintainer | Release checklist step 5; tags after each stage |
+| Repository renamed `agent-dispatch-protocol` | §9 layout root (C1.4) |
+| eng-principles ENG-DEC-014: `0.y.z` until declared market-ready | No change: the crate starts at 0.1.0 |
 
 ---
 
