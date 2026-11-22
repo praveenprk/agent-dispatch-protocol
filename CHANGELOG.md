@@ -56,6 +56,7 @@ dates on `main`.
 
 | Date | PR | Kind | Change | Versions |
 |------|----|------|--------|----------|
+| 2026-11-22 | #24 | Proposal | ADP-A-008 drafted and ACCEPTED: Rust reference implementation at `impl/rust/`, new Implementation class in ADP-0 (1.3.0 when applied). Reconciled with ADP-0 1.2.0 before merge. | — |
 | 2026-11-22 | #26 | Apply | ADP-A-009: contributors merge straightforward changes into `main` (ADP-0 §8.1); releases on `stable` (§8.2). AGENTS.md roles and enforcement updated. | ADP-0 1.2.0 |
 | 2026-11-22 | #25 | Proposal | ADP-A-009 drafted and ACCEPTED. | — |
 | 2026-11-17 | #23 | Docs | This changelog. Tags `adp-0/v1.0.0` … `adp-2/v2.0.1` and pre-release GitHub Releases created for every version below. | — |
