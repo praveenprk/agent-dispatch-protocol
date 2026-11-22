@@ -5,15 +5,17 @@ repository since its first commit. Newest first.
 
 - **Normative history:** the spec's own Revision Log. If this file and a
   spec disagree, the spec wins (ADP-0 §3).
-- **Tag:** each version is tagged `adp-N/vX.Y.Z` on the merge commit
-  that put it on `main`, and has a GitHub Release.
+- **Tag:** each version is tagged `adp-N/vX.Y.Z` on `stable`, after the
+  maintainer merges `main` into `stable` (ADP-0 §8.2), and has a GitHub
+  Release. Tags made before ADP-0 1.2.0 sit on the merge commit that put
+  the version on `main`.
 - **Status:** every document is a Draft. Releases are marked pre-release.
 
 ## Latest
 
 | Document | Version | Tag |
 |----------|---------|-----|
-| ADP-0 Governance | 1.1.0 | `adp-0/v1.1.0` |
+| ADP-0 Governance | 1.2.0 | `adp-0/v1.2.0` (when released) |
 | ADP-1 Agent Dispatch Protocol | 1.1.1 | `adp-1/v1.1.1` |
 | ADP-2 Dispatch Authority | 2.0.1 | `adp-2/v2.0.1` |
 
@@ -41,6 +43,7 @@ repository since its first commit. Newest first.
 
 | Version | Date | Bump | Change | Upgrade impact | Defects closed | Proposal | PR |
 |---------|------|------|--------|----------------|----------------|----------|----|
+| 1.2.0 | 2026-11-22 | Minor | §8.1 contributors merge into `main` when checks pass, nothing is asked of the maintainer, no decision is recorded and the change is not security-related. §8.2 releases: the maintainer merges `main` into `stable` and tags there. | Routine changes no longer wait for the maintainer's merge. Decisions, security-related changes and releases stay with the maintainer. | — | ADP-A-009 | #25, #26 |
 | 1.1.0 | 2026-11-15 | Minor | §5.6 conformance suite format: layout, vector file, rules for vectors, known-defect markers. | Conformance vectors follow §5.6. | — | ADP-A-003 | #9, #12 |
 | 1.0.0 | 2026-11-15 | — | Initial governance: artifact classes and precedence, defect register, proposal process, application order, errata, version impact, maintainer roles. | — | — | — | #3 |
 
@@ -53,6 +56,8 @@ dates on `main`.
 
 | Date | PR | Kind | Change | Versions |
 |------|----|------|--------|----------|
+| 2026-11-22 | #26 | Apply | ADP-A-009: contributors merge straightforward changes into `main` (ADP-0 §8.1); releases on `stable` (§8.2). AGENTS.md roles and enforcement updated. | ADP-0 1.2.0 |
+| 2026-11-22 | #25 | Proposal | ADP-A-009 drafted and ACCEPTED. | — |
 | 2026-11-17 | #23 | Docs | This changelog. Tags `adp-0/v1.0.0` … `adp-2/v2.0.1` and pre-release GitHub Releases created for every version below. | — |
 | 2026-11-17 | #22 | Apply | ADP-A-007: ADP-1 text matches its validation contract. 15 vectors (68 ADP-1), new V-13, R-12, R-13 (26 rules), R-13 in `report.schema.json`. CI self-test fixed to not depend on one defect's status. 7 defects resolved, 6 open, none high. | ADP-1 1.1.1, ADP-2 2.0.1 |
 | 2026-11-17 | #21 | Proposal | ADP-A-007 drafted and ACCEPTED, with a Scenarios table. | — |
