@@ -4,10 +4,10 @@
 |--------------|-----------------------------------------|
 | **ID**       | ADP-0                                   |
 | **Title**    | Specification Governance and Change Process |
-| **Version**  | 1.1.0                                   |
+| **Version**  | 1.2.0                                   |
 | **Status**   | Draft                                   |
 | **License**  | Apache 2.0                              |
-| **Date**     | 2026-11-15                              |
+| **Date**     | 2026-11-22                              |
 | **Governs**  | All ADP-N documents, `schema/`, `conformance/`, `examples/`, `DEFECTS.md` |
 
 ---
@@ -353,12 +353,44 @@ the protocol version.
 |---------------|----------------------|-----------------------------------|
 | Maintainer    | Repository owner     | Records decisions (§5.3). Files,  |
 |               | (`praveenprk`)       | grades, and closes defects.       |
+|               |                      | Answers questions. Merges what    |
+|               |                      | §8.1 leaves to the maintainer.    |
+|               |                      | Releases (§8.2).                  |
 | Contributor   | Any human or agent   | Files defects with evidence.      |
-|               |                      | Authors proposals.                |
+|               |                      | Authors proposals. Merges into    |
+|               |                      | `main` under §8.1.                |
 
 There is one maintainer. Introducing additional maintainers, a
 review quorum, or external standards-body participation is a change
 to ADP-0 and follows §5.
+
+### 8.1 Merging into `main`
+
+A contributor MAY merge a pull request into `main` only when all of
+the following hold. Otherwise only the maintainer merges it.
+
+1. Every required check passes.
+2. Nothing is asked of the maintainer: no question in the pull
+   request, and no row of a proposal's questions table that it adds
+   or changes, lacks a maintainer answer.
+3. It records no decision (§5.3) and changes no Decision section.
+4. It is not security-related. A change is security-related when it
+   touches: vulnerability reports or fixes; credentials, secrets, or
+   workflow token permissions; repository rules or required checks,
+   including `scripts/ci/` and `scripts/hooks/`; or code that
+   authenticates, authorizes, encrypts, signs, or checks integrity.
+   Such a pull request carries the label `security`.
+5. When it applies a proposal, that proposal is ACCEPTED and the
+   pull request applies it as written, in the order of §5.4.
+
+A contributor who is unsure whether a rule holds leaves the merge to
+the maintainer. Every merge into `main` is a merge commit (§4.3).
+
+### 8.2 Releases
+
+`stable` holds released versions and changes only by a merge commit
+from `main`. Only the maintainer merges into `stable` and creates
+version tags. A version is tagged `adp-N/vX.Y.Z` on `stable`.
 
 ---
 
@@ -413,3 +445,6 @@ adp-protocol/
 | 2026-11-15 | 1.1.0. §5.6 Conformance suite format: layout,   |
 |            | vector file, rules for vectors, known-defect    |
 |            | markers. ADP-A-003.                             |
+| 2026-11-22 | 1.2.0. §8.1 contributors merge into `main` when |
+|            | nothing needs the maintainer; §8.2 releases on  |
+|            | `stable`. ADP-A-009.                            |
