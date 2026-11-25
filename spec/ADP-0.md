@@ -4,10 +4,10 @@
 |--------------|-----------------------------------------|
 | **ID**       | ADP-0                                   |
 | **Title**    | Specification Governance and Change Process |
-| **Version**  | 1.2.0                                   |
+| **Version**  | 1.3.0                                   |
 | **Status**   | Draft                                   |
 | **License**  | Apache 2.0                              |
-| **Date**     | 2026-11-22                              |
+| **Date**     | 2026-11-26                              |
 | **Governs**  | All ADP-N documents, `schema/`, `conformance/`, `examples/`, `DEFECTS.md` |
 
 ---
@@ -66,6 +66,7 @@ Every file in the repository belongs to exactly one class.
 | **Informative** | Sections of `spec/ADP-N.md` whose heading   | No      |
 |                 | carries the suffix `(Informative)`;         |         |
 |                 | `examples/`; `README.md`; `AGENTS.md`       |         |
+| **Implementation** | `impl/` (the reference implementation)     | No      |
 | **Process**     | `spec/ADP-0.md`; `DEFECTS.md`;              | On the  |
 |                 | `proposals/`                                | process |
 | **Record**      | `experiments/`                              | No      |
@@ -89,9 +90,9 @@ When normative artifacts disagree:
    The contradiction is a defect and is resolved only by an
    accepted proposal (§5). Implementations MUST NOT pick a reading
    and claim conformance on that basis.
-3. Informative artifacts never take precedence over normative ones.
-   An informative artifact that contradicts normative text is a
-   defect in the informative artifact.
+3. Informative and implementation artifacts never take precedence
+   over normative ones. One that contradicts normative text is a
+   defect in that artifact.
 
 ### 3.3 Records
 
@@ -102,7 +103,16 @@ commit that added it. A record that disagrees with later normative
 text is not a defect, and records are not edited to track later
 changes.
 
-### 3.4 Unlisted files
+### 3.4 Implementation
+
+The reference implementation lives in `impl/`. It is not binding: it
+never takes precedence over spec text, schemas or vectors. It MUST
+give every conformance vector of every document it claims its
+expected verdict, except where §5.6.4 applies. A disagreement is a
+defect in the implementation. The README states which document
+versions it claims.
+
+### 3.5 Unlisted files
 
 A file matched by no row in §3 is Informative until an accepted
 proposal assigns it a class. A new class is a change to ADP-0 and
@@ -225,8 +235,9 @@ complete before the next begins.
    vector.
 3. **SCHEMA** — `schema/` updated until every conformance vector
    yields its expected verdict.
-4. **IMPLEMENTATION** — any reference implementation updated until
-   every conformance vector yields its expected verdict.
+4. **IMPLEMENTATION** — the reference implementation (§3.4) updated
+   until every conformance vector it claims yields its expected
+   verdict.
 5. **INFORMATIVE** — `examples/` and `README.md` brought into line.
 6. **REGISTER** — resolved `DEFECTS.md` entries set to `RESOLVED`
    with the proposal ID and commit hash.
@@ -397,16 +408,20 @@ version tags. A version is tagged `adp-N/vX.Y.Z` on `stable`.
 ## 9. Repository Layout
 
 ```
-adp-protocol/
+agent-dispatch-protocol/
 ├── spec/
 │   ├── ADP-0.md          # this document (process)
-│   └── ADP-1.md          # protocol specification
+│   ├── ADP-1.md          # protocol specification
+│   └── ADP-2.md          # dispatch authority
 ├── proposals/            # ADP-A-NNN-<slug>.md
-├── conformance/          # created by first validation proposal (§5.5)
+├── conformance/          # vectors (§5.6)
 ├── schema/               # normative JSON Schemas
+├── impl/rust/            # reference implementation (§3.4)
 ├── examples/             # informative
 ├── experiments/          # records (§3.3)
+├── scripts/              # hooks and CI checks
 ├── DEFECTS.md            # defect register
+├── CHANGELOG.md          # informative (release notes)
 ├── README.md             # informative
 ├── AGENTS.md             # informative (repo rules)
 └── LICENSE
@@ -448,3 +463,6 @@ adp-protocol/
 | 2026-11-22 | 1.2.0. §8.1 contributors merge into `main` when |
 |            | nothing needs the maintainer; §8.2 releases on  |
 |            | `stable`. ADP-A-009.                            |
+| 2026-11-26 | 1.3.0. Implementation class (§3, §3.4);         |
+|            | precedence rule 3 covers it (§3.2); §5.4 step 4 |
+|            | names it; layout updated (§9). ADP-A-008.       |
