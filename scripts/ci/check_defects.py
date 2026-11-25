@@ -59,6 +59,16 @@ def main():
     base = sys.argv[1]
     errors = []
 
+    # Fail closed: a BASE git cannot resolve (including the all-zero SHA a
+    # branch-creating push gives) would otherwise read as an empty register
+    # and skip the append-only checks. A BASE that resolves but has no
+    # DEFECTS.md is a real empty register.
+    resolved = subprocess.run(["git", "rev-parse", "--verify", "--quiet", f"{base}^{{commit}}"],
+                              capture_output=True, text=True)
+    if resolved.returncode != 0 or set(base) == {"0"}:
+        print(f"check_defects.py: cannot resolve BASE {base!r} to a commit", file=sys.stderr)
+        return 2
+
     old = subprocess.run(["git", "show", f"{base}:DEFECTS.md"],
                          capture_output=True, text=True)
     old_order, old_entries = parse(old.stdout) if old.returncode == 0 else ([], {})

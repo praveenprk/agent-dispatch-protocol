@@ -4,7 +4,8 @@
 # check, run where it cannot be skipped.
 # Usage: scripts/ci/check-commits BASE [HEAD]
 # Anchors resolve against the checked-out tree (HEAD).
-# Substrate: POSIX sh, git, mktemp. Exit: 0 all accepted, 1 any refused.
+# Substrate: POSIX sh, git, mktemp. Exit: 0 all accepted, 1 any refused,
+# 2 usage or a range that does not resolve.
 # Quiet on success.
 
 set -u
@@ -13,12 +14,25 @@ set -u
 base=$1
 head=${2:-HEAD}
 
+# Fail closed: a range git cannot resolve would make rev-list print an
+# error and the loop below run zero times, which would read as a pass.
+# The all-zero SHA is what a push that creates a branch gives as BASE.
+for ref in "$base" "$head"; do
+    case $ref in
+        '' | *[!0]*) ;;
+        *) printf '%s: %s is the all-zero SHA: no range to check\n' "$(basename "$0")" "$ref" >&2; exit 2 ;;
+    esac
+    git rev-parse --verify --quiet "$ref^{commit}" >/dev/null ||
+        { printf '%s: cannot resolve %s to a commit\n' "$(basename "$0")" "${ref:-(empty)}" >&2; exit 2; }
+done
+commits=$(git rev-list --no-merges --reverse "$base..$head") || exit 2
+
 hooks=$(cd "$(dirname "$0")/../hooks" && pwd -P) || exit 2
 msg=$(mktemp) || exit 2
 trap 'rm -f "$msg"' EXIT INT TERM
 
 failed=0
-for c in $(git rev-list --no-merges --reverse "$base..$head"); do
+for c in $commits; do
     git log -1 --format=%B "$c" > "$msg"
     if ! out=$(sh "$hooks/commit-msg" "$msg" 2>&1); then
         printf '%s %s\n%s\n' "$(git rev-parse --short "$c")" "$(git log -1 --format=%s "$c")" "$out" >&2
