@@ -104,15 +104,15 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   <div class="eyebrow">Agent Dispatch Protocol · progress</div>
   <h1>ADP Progress Ledger</h1>
   <p>What each merged change made possible, told through one regulated scenario: a bank using an AI coding agent on payment code.</p>
-  <div class="asof">As of main <span class="id">0f5dbfd</span> · 2026-11-17 · 1 proposal in review</div>
+  <div class="asof">As of main <span class="id">f82ffb6</span> · 2026-11-26 · 3 pull requests in review</div>
 </header>
 
 <section aria-labelledby="now">
   <h2 id="now">Where ADP stands</h2>
   <div class="status">
-    <div class="tile"><span class="k">ADP-1 · instruction format</span><span class="v">1.1.1 · no high defects</span><span class="d">Started with 4 critical defects. All critical and high ones fixed. 68 test vectors, 26 rules; every rule the schemas apply is now written in the spec.</span></div>
+    <div class="tile"><span class="k">ADP-1 · instruction format</span><span class="v">1.1.1 · no high defects</span><span class="d">Started with 4 critical defects. All critical and high ones fixed. 68 test vectors, 26 rules; every rule the schemas apply is written in the spec, and the reference validator passes all 68.</span></div>
     <div class="tile"><span class="k">ADP-2 · who may ask for what</span><span class="v">2.0.1 Draft · no open defects</span><span class="d">Every check now has one exact answer. 33 test vectors; CI verifies the grant and record answers.</span></div>
-    <div class="tile"><span class="k">Validator software</span><span class="v">Not built yet · proposed</span><span class="d">ADP-A-008 (in review) proposes a Rust reference validator that must pass every published test case.</span></div>
+    <div class="tile"><span class="k">Validator software</span><span class="v">Rust 0.1.0 · ADP-1 done</span><span class="d">Checks instructions and reports against every ADP-1 test case, naming the exact rule, in CI on every change. Grants and authority (ADP-2) come next, in 0.2.0.</span></div>
     <div class="tile"><span class="k">Known defects, open</span><span class="v">6 · 0 critical, 0 high</span><span class="d">1 medium, 5 low. Every one is written down with evidence.</span></div>
   </div>
 </section>
@@ -128,14 +128,14 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
       <p>The grant names what the agent may read and write, for one session only (G-3, G-4, G-8). Path matching is now defined exactly, so every tool gives the same answer on whether <code>src/fees/round.py</code> is in scope. What is missing is software that enforces it.</p></div>
     <div class="q"><h3>Could the agent change its own controls?</h3><span class="chip warn">Partly</span>
       <p>No grant may let an agent write to its own guardrails: CI, hooks, grant storage (G-7). The overlap test is now defined and errs toward refusing, and a path like <code>src/../ci/hook</code> matches nothing. Enforcement on disk is the runtime's job, and no runtime exists yet.</p></div>
-    <div class="q"><h3>Can all of this be proven afterwards?</h3><span class="chip no">Not yet</span>
-      <p>A report that says <code>COMPLETE</code> while a check failed is now rejected, so "done" means every agreed check passed. The instruction, the grant and the human-signed repository record can each be checked by machine against published test cases, so the paperwork is solid. Proving what the agent actually did needs a runtime and a validator, and neither exists yet.</p></div>
+    <div class="q"><h3>Can all of this be proven afterwards?</h3><span class="chip warn">Partly</span>
+      <p>A report that says <code>COMPLETE</code> while a check failed is rejected, so "done" means every agreed check passed. The instruction and the agent's report can now be checked by software that names the exact rule broken, and that software is itself tested against all 68 published cases. Checking the grant by software comes next. Proving what the agent actually did still needs a runtime, and none exists yet.</p></div>
   </div>
 </section>
 
 <section aria-labelledby="trend">
   <h2 id="trend">Open defects after each change</h2>
-  <p class="muted">Counted from <code>DEFECTS.md</code> at each merge commit on main. A rise at #18 is new gaps being written down, not new breakage.</p>
+  <p class="muted">Counted from <code>DEFECTS.md</code> at each merge commit on main. A rise at #18 is new gaps being written down, not new breakage. Unchanged at 6 from #22 through #29.</p>
   <div class="chart" role="img" aria-label="Stacked bars of open defects by severity at nine merges. Critical falls from 4 to 0 by PR 16. Total is 16 at baseline, 15 after PR 11, 13 after PR 14, 10 after PR 16 and 17, 18 after PR 18, 13 after PR 20, and 6 after PR 22.">
     <svg viewBox="0 0 800 250" xmlns="http://www.w3.org/2000/svg">
       <!-- scale: y = 210 - n*9 ; 0..20 -->
@@ -217,8 +217,16 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 <section aria-labelledby="ledger">
   <h2 id="ledger">What each merge changed</h2>
-  <p class="muted">Newest first. Proposal-only merges (#7–#10, #13, #15, #19, #21) recorded decisions and are folded into the change that applied them.</p>
+  <p class="muted">Newest first. Proposal-only merges (#7–#10, #13, #15, #19, #21, #24, #25) and changelog-only merges (#27) recorded decisions or notes and are folded into the change that applied them.</p>
   <div class="ledger">
+    <div class="row"><div class="pr">#29<small>2026-11-26</small></div><div class="body">
+      <h3>A working validator for instructions and reports (crate 0.1.0, ADP-0 1.3.0)</h3>
+      <p>A Rust library checks every ADP-1 instruction and report and names the exact rule broken and where, for example <code>V-13 at /produce/0/path</code>. CI runs it against all 68 published test cases on every change; a wrong verdict or a right verdict for the wrong reason fails the build. ADP-0 gains an Implementation class: the validator must pass every test case of what it claims, and never overrides the spec. Proposed and accepted in #24.</p>
+      <p class="bank"><b>For the bank:</b> the platform team can embed one validator in front of the agent for CHG-4821. An instruction with a produce entry but no file path is stopped before the agent sees it, and the log says <code>V-13</code>, the rule the auditor can look up. The report that comes back is checked the same way, so a <code>COMPLETE</code> with a failed check never reaches the change record.</p></div></div>
+    <div class="row"><div class="pr">#26<small>2026-11-22</small></div><div class="body">
+      <h3>Routine changes merge without waiting; releases stay with the maintainer (ADP-0 1.2.0)</h3>
+      <p>A contributor may merge into main when checks pass, nothing is asked of the maintainer, no decision is recorded and the change is not security-related. Security-related changes, decisions and releases stay with the maintainer, and releases now live on a protected <code>stable</code> branch. Proposed and accepted in #25.</p>
+      <p class="bank"><b>For the bank:</b> segregation of duties in the standard's own process: the people and agents who write changes cannot ship a release or a change to CI and checks; one named maintainer does, and the bank can pin to <code>stable</code>.</p></div></div>
     <div class="row"><div class="pr">#23<small>2026-11-17</small></div><div class="body">
       <h3>Release notes and version tags</h3>
       <p><code>CHANGELOG.md</code> lists every version of ADP-0, ADP-1 and ADP-2 with its upgrade impact, and every change since the first commit. Each version has a tag and a pre-release GitHub Release.</p>
@@ -264,21 +272,27 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 <section aria-labelledby="next">
   <h2 id="next">In review</h2>
-  <div class="q"><h3>#24 · ADP-A-008: Rust reference validator</h3><span class="chip next">Awaiting decision</span>
-    <p>One Rust library that checks instructions, reports, grants and records, run in CI against every published test case, naming the exact rule that fails. It would check the 19 ADP-2 authority test cases for the first time. No high or critical defect is open; 1 medium and 5 low remain.</p></div>
+  <div class="q"><h3>#30 · Security policy, contributing guide, code of conduct, templates</h3><span class="chip next">Awaiting merge</span>
+    <p>A private way to report a vulnerability, a single entry point for contributors, and issue forms that ask for evidence the way the defect register does.</p></div>
+  <div class="q"><h3>#31 · Checks on main and stable, not only on pull requests</h3><span class="chip next">Needs an update from main</span>
+    <p>Each protected branch shows its own health after every merge, so a release on <code>stable</code> carries visible passing checks.</p></div>
+  <div class="q"><h3>#32 · Automated dependency updates</h3><span class="chip next">Awaiting merge</span>
+    <p>Weekly update proposals for the pinned CI actions and the validator's one dependency, each merged by the maintainer.</p></div>
+  <div class="q"><h3>Next · Validator for grants and authority (crate 0.2.0)</h3><span class="chip next">Planned</span>
+    <p>ADP-A-008 stage 2: the 33 ADP-2 test cases, including the 19 authority cases no check runs today. No high or critical defect is open; 1 medium and 5 low remain.</p></div>
 </section>
 
 <section class="limits" aria-labelledby="limits">
   <h2 id="limits">What ADP does not do yet</h2>
   <ul>
-    <li>No validator implementation exists. Every check above is specified and tested on paper and in CI, not enforced in a running system.</li>
-    <li>ADP-1 and ADP-2 are Drafts. ADP-2's checks are now exact, but nothing has been built or used against them yet.</li>
+    <li>The validator covers instructions and reports (ADP-1), not yet grants and authority (ADP-2). It is a library: nothing yet runs it inside an agent runtime.</li>
+    <li>ADP-1 and ADP-2 are Drafts. ADP-2's checks are exact, but no software checks them yet.</li>
     <li>ADP gives an auditor structured evidence. It does not by itself make a firm compliant with any regulation.</li>
   </ul>
 </section>
 
 <footer>
-  <span>Source: <a href="https://github.com/praveenprk/adp-protocol">github.com/praveenprk/adp-protocol</a>. Defect counts are computed from <code>DEFECTS.md</code> at each merge commit.</span>
+  <span>Source: <a href="https://github.com/praveenprk/agent-dispatch-protocol">github.com/praveenprk/agent-dispatch-protocol</a>. Defect counts are computed from <code>DEFECTS.md</code> at each merge commit.</span>
   <span>The bank scenario is illustrative. It describes no real institution.</span>
 </footer>
 
