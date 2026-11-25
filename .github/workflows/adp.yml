@@ -5,6 +5,10 @@ name: adp
 on:
   pull_request:
     branches: [main]
+  # Pushes to the protected branches arrive only by merge. Checking them
+  # shows each branch's own health: BASE..HEAD is the push's before..after.
+  push:
+    branches: [main, stable]
 
 permissions:
   contents: read
@@ -17,7 +21,7 @@ jobs:
         with:
           fetch-depth: 0
       - run: sh scripts/hooks/test
-      - run: sh scripts/ci/check-commits "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}"
+      - run: sh scripts/ci/check-commits "${{ github.event.pull_request.base.sha || github.event.before }}" "${{ github.event.pull_request.head.sha || github.sha }}"
 
   schema:
     runs-on: ubuntu-24.04
@@ -31,7 +35,7 @@ jobs:
       - run: python -m pip install --quiet jsonschema==4.26.0 pyyaml==6.0.3
       - run: python scripts/ci/check_schema.py
       - run: python scripts/ci/check_conformance.py
-      - run: sh scripts/ci/check-schema-gate "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}"
+      - run: sh scripts/ci/check-schema-gate "${{ github.event.pull_request.base.sha || github.event.before }}" "${{ github.event.pull_request.head.sha || github.sha }}"
 
   defects:
     runs-on: ubuntu-24.04
@@ -43,4 +47,4 @@ jobs:
         with:
           python-version: "3.12"
       - run: sh scripts/ci/test python
-      - run: python scripts/ci/check_defects.py "${{ github.event.pull_request.base.sha }}"
+      - run: python scripts/ci/check_defects.py "${{ github.event.pull_request.base.sha || github.event.before }}"
