@@ -64,12 +64,14 @@ Keywords are frozen at v1.0.0. Extensions via namespaced metadata (`x-{namespace
 
 Pure function. Envelope in, pass/fail out. No state. No network. Embeddable anywhere.
 
-```python
-from adp import validate
-
-result = validate(envelope)
-assert result.valid
+```rust
+let verdict = adp::v1::validate_dispatch(&envelope);
+assert!(verdict.is_valid());
 ```
+
+`envelope` is a `serde_json::Value`. On failure, each violation names
+its rule (`V-13`) and a JSON Pointer to the field. The crate is in
+[`impl/rust/`](impl/rust/).
 
 ## Project Structure
 
@@ -83,14 +85,18 @@ adp-protocol/
 │   ├── record.schema.json     # Codebase event record schema (ADP-2 §4.3)
 │   └── report.schema.json     # Report envelope schema
 ├── conformance/               # Conformance vectors (ADP-0 §5.6)
-├── python/adp/                # Python reference implementation
+├── impl/rust/                 # Rust reference implementation
 ├── examples/                  # Tier 1, 2, 3 examples
 └── LICENSE
 ```
 
 ## Status
 
-Pre-release. Spec finalized. Schema and reference implementation in progress.
+Pre-release. Spec finalized. Schemas published.
+
+The reference implementation, crate `adp` 0.1.0, claims ADP-1 1.1.1: it
+passes every ADP-1 conformance vector with the exact rule. ADP-2 follows
+in crate 0.2.0.
 
 Release notes for every version: [CHANGELOG.md](CHANGELOG.md).
 

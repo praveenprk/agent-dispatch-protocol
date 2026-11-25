@@ -15,9 +15,10 @@ repository since its first commit. Newest first.
 
 | Document | Version | Tag |
 |----------|---------|-----|
-| ADP-0 Governance | 1.2.0 | `adp-0/v1.2.0` (when released) |
+| ADP-0 Governance | 1.3.0 | `adp-0/v1.3.0` (when released) |
 | ADP-1 Agent Dispatch Protocol | 1.1.1 | `adp-1/v1.1.1` |
 | ADP-2 Dispatch Authority | 2.0.1 | `adp-2/v2.0.1` |
+| Rust crate `adp` | 0.1.0 | `adp-v0.1.0` (when released) |
 
 ---
 
@@ -43,9 +44,19 @@ repository since its first commit. Newest first.
 
 | Version | Date | Bump | Change | Upgrade impact | Defects closed | Proposal | PR |
 |---------|------|------|--------|----------------|----------------|----------|----|
+| 1.3.0 | 2026-11-26 | Minor | New artifact class Implementation (§3.4): `impl/` holds the reference implementation, which is not binding and must pass every vector of each document it claims. Precedence rule 3 covers it (§3.2); §5.4 step 4 names it; §9 layout brought up to date. | None for envelopes. The reference implementation now has a defined duty and place. | — | ADP-A-008 | #24, #29 |
 | 1.2.0 | 2026-11-22 | Minor | §8.1 contributors merge into `main` when checks pass, nothing is asked of the maintainer, no decision is recorded and the change is not security-related. §8.2 releases: the maintainer merges `main` into `stable` and tags there. | Routine changes no longer wait for the maintainer's merge. Decisions, security-related changes and releases stay with the maintainer. | — | ADP-A-009 | #25, #26 |
 | 1.1.0 | 2026-11-15 | Minor | §5.6 conformance suite format: layout, vector file, rules for vectors, known-defect markers. | Conformance vectors follow §5.6. | — | ADP-A-003 | #9, #12 |
 | 1.0.0 | 2026-11-15 | — | Initial governance: artifact classes and precedence, defect register, proposal process, application order, errata, version impact, maintainer roles. | — | — | — | #3 |
+
+## Rust implementation
+
+The crate `adp` at `impl/rust/` has its own version line (ADP-A-008 C2.1).
+Details per release: [impl/rust/CHANGELOG.md](impl/rust/CHANGELOG.md).
+
+| Crate | Date | Implements | Change | PR |
+|-------|------|------------|--------|----|
+| 0.1.0 | 2026-11-26 | ADP-1 1.1.1 | First release: `v1::validate_dispatch` and `v1::validate_report`, every V and R rule, all 68 ADP-1 vectors with the exact rule. | #29 |
 
 ---
 
@@ -56,6 +67,7 @@ dates on `main`.
 
 | Date | PR | Kind | Change | Versions |
 |------|----|------|--------|----------|
+| 2026-11-26 | #29 | Apply | ADP-A-008 stage 1: Implementation class in ADP-0; Rust crate `adp` at `impl/rust/` passes all 68 ADP-1 vectors with the exact rule; CI job `implementation`; README points to the crate. | ADP-0 1.3.0, crate 0.1.0 |
 | 2026-11-22 | #24 | Proposal | ADP-A-008 drafted and ACCEPTED: Rust reference implementation at `impl/rust/`, new Implementation class in ADP-0 (1.3.0 when applied). Reconciled with ADP-0 1.2.0 before merge. | — |
 | 2026-11-22 | #26 | Apply | ADP-A-009: contributors merge straightforward changes into `main` (ADP-0 §8.1); releases on `stable` (§8.2). AGENTS.md roles and enforcement updated. | ADP-0 1.2.0 |
 | 2026-11-22 | #25 | Proposal | ADP-A-009 drafted and ACCEPTED. | — |
