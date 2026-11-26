@@ -1,0 +1,26 @@
+name: Proposal idea
+description: A change to the protocol or the process, before it is written as ADP-A-NNN (ADP-0 §5)
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A change is decided on a proposal file, `proposals/ADP-A-NNN-<slug>.md` (ADP-0 §5.1), not on this issue. Use this issue to ask whether one is wanted.
+  - type: textarea
+    id: need
+    attributes:
+      label: Need
+      description: What is missing or wrong today, with evidence or the defect ids it would resolve.
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: Change
+      description: The documents it would change, and the version bump you expect (ADP-0 §7).
+    validations:
+      required: true
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Scenario
+      description: One concrete dispatch, today and with the change.

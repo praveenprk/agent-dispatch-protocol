@@ -44,3 +44,21 @@ jobs:
           python-version: "3.12"
       - run: sh scripts/ci/test python
       - run: python scripts/ci/check_defects.py "${{ github.event.pull_request.base.sha }}"
+
+  implementation:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: impl/rust
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: rustup toolchain install 1.99.0 --profile minimal --component rustfmt,clippy
+      - run: rustup override set 1.99.0
+      - run: cargo fmt --check
+      - run: cargo clippy --locked --all-targets -- -D warnings
+      - run: cargo test --locked
+      - run: cargo doc --locked --no-deps
+        env:
+          RUSTDOCFLAGS: -D warnings
+      - run: rustup toolchain install 1.85.0 --profile minimal
+      - run: cargo +1.85.0 test --locked   # MSRV, ADP-A-008 C2.1(e)
