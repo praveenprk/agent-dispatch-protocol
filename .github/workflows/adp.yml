@@ -3,8 +3,10 @@
 name: adp
 
 on:
+  # Pull requests into stable are releases (ADP-0 §8.2); stable-integrity
+  # requires the same jobs, so they run there too.
   pull_request:
-    branches: [main]
+    branches: [main, stable]
   # Pushes to the protected branches arrive only by merge. Checking them
   # shows each branch's own health: BASE..HEAD is the push's before..after.
   push:
