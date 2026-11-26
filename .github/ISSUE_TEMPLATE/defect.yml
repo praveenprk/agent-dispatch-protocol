@@ -1,0 +1,39 @@
+name: Defect
+description: A spec, schema, vector, example or implementation that is wrong (ADP-0 §4)
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fields follow the `DEFECTS.md` entry format (ADP-0 §4.2). The maintainer assigns the `ADP-D-NNN` id and the severity.
+        Evidence must reproduce at a named commit (ADP-0 §4.3). A defect described from memory or summary is not evidence.
+        A vulnerability goes to SECURITY.md, not here.
+  - type: input
+    id: artifact
+    attributes:
+      label: Artifact
+      description: "<class> — <file> <section | rule | line>"
+      placeholder: "Normative — spec/ADP-1.md §4.5"
+    validations:
+      required: true
+  - type: textarea
+    id: says
+    attributes:
+      label: Says
+      description: The governing normative statement, quoted or cited.
+    validations:
+      required: true
+  - type: textarea
+    id: does
+    attributes:
+      label: Does
+      description: What the artifact actually says or accepts.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: A quoted line with its location, or a command and its output, at a named commit.
+      render: text
+    validations:
+      required: true
