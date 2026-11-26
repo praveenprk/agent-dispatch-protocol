@@ -104,7 +104,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   <div class="eyebrow">Agent Dispatch Protocol · progress</div>
   <h1>ADP Progress Ledger</h1>
   <p>What each merged change made possible, told through one regulated scenario: a bank using an AI coding agent on payment code.</p>
-  <div class="asof">As of main <span class="id">f82ffb6</span> · 2026-11-26 · 3 pull requests in review</div>
+  <div class="asof">As of main <span class="id">7c9d767</span> · 2026-11-27 · 5 pull requests in review</div>
 </header>
 
 <section aria-labelledby="now">
@@ -135,7 +135,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 <section aria-labelledby="trend">
   <h2 id="trend">Open defects after each change</h2>
-  <p class="muted">Counted from <code>DEFECTS.md</code> at each merge commit on main. A rise at #18 is new gaps being written down, not new breakage. Unchanged at 6 from #22 through #29.</p>
+  <p class="muted">Counted from <code>DEFECTS.md</code> at each merge commit on main. A rise at #18 is new gaps being written down, not new breakage. Unchanged at 6 from #22 through #39.</p>
   <div class="chart" role="img" aria-label="Stacked bars of open defects by severity at nine merges. Critical falls from 4 to 0 by PR 16. Total is 16 at baseline, 15 after PR 11, 13 after PR 14, 10 after PR 16 and 17, 18 after PR 18, 13 after PR 20, and 6 after PR 22.">
     <svg viewBox="0 0 800 250" xmlns="http://www.w3.org/2000/svg">
       <!-- scale: y = 210 - n*9 ; 0..20 -->
@@ -217,8 +217,16 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 <section aria-labelledby="ledger">
   <h2 id="ledger">What each merge changed</h2>
-  <p class="muted">Newest first. Proposal-only merges (#7–#10, #13, #15, #19, #21, #24, #25) and changelog-only merges (#27) recorded decisions or notes and are folded into the change that applied them.</p>
+  <p class="muted">Newest first. Proposal-only merges (#7–#10, #13, #15, #19, #21, #24, #25, #35) and changelog-only merges (#27) recorded decisions or notes and are folded into the change that applied them.</p>
   <div class="ledger">
+    <div class="row"><div class="pr">#32–#39<small>2026-11-26 – 27</small></div><div class="body">
+      <h3>Stricter, harder-to-skip checks on ADP itself</h3>
+      <p>A check that cannot find the changes it should look at now fails instead of passing quietly (#33). Checks run after every merge into <code>main</code> and <code>stable</code>, and on release pull requests into <code>stable</code>, not only on ordinary pull requests (#34, #39). ADP uses the same shared commit check as its sister projects, which also checks each pull request's title and description (#38, #37). Dependency updates for the CI actions and the validator arrive weekly as pull requests (#32).</p>
+      <p class="bank"><b>For the bank:</b> a misconfigured check can no longer report "passed" on a CHG-4821 change it never looked at. The <code>stable</code> branch the bank pins to shows its own passing checks after each release, and every CI action is pinned and kept up to date by reviewed pull requests, never by silent upgrades.</p></div></div>
+    <div class="row"><div class="pr">#30<small>2026-11-26</small></div><div class="body">
+      <h3>Security policy, contributing guide and code of conduct</h3>
+      <p>A private channel for reporting vulnerabilities (GitHub private reporting or email), one entry point for contributors, the Contributor Covenant 2.1, and issue forms that ask for evidence the way the defect register does.</p>
+      <p class="bank"><b>For the bank:</b> vendor due diligence finds a published security policy with a private reporting route, so a flaw in the standard reaches the maintainer before it reaches the public.</p></div></div>
     <div class="row"><div class="pr">#29<small>2026-11-26</small></div><div class="body">
       <h3>A working validator for instructions and reports (crate 0.1.0, ADP-0 1.3.0)</h3>
       <p>A Rust library checks every ADP-1 instruction and report and names the exact rule broken and where, for example <code>V-13 at /produce/0/path</code>. CI runs it against all 68 published test cases on every change; a wrong verdict or a right verdict for the wrong reason fails the build. ADP-0 gains an Implementation class: the validator must pass every test case of what it claims, and never overrides the spec. Proposed and accepted in #24.</p>
@@ -272,12 +280,12 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 <section aria-labelledby="next">
   <h2 id="next">In review</h2>
-  <div class="q"><h3>#30 · Security policy, contributing guide, code of conduct, templates</h3><span class="chip next">Awaiting merge</span>
-    <p>A private way to report a vulnerability, a single entry point for contributors, and issue forms that ask for evidence the way the defect register does.</p></div>
-  <div class="q"><h3>#31 · Checks on main and stable, not only on pull requests</h3><span class="chip next">Needs an update from main</span>
-    <p>Each protected branch shows its own health after every merge, so a release on <code>stable</code> carries visible passing checks.</p></div>
-  <div class="q"><h3>#32 · Automated dependency updates</h3><span class="chip next">Awaiting merge</span>
-    <p>Weekly update proposals for the pinned CI actions and the validator's one dependency, each merged by the maintainer.</p></div>
+  <div class="q"><h3>#40 · First release on <code>stable</code>: ADP-0 1.3.0 and validator 0.1.0</h3><span class="chip next">Awaiting the maintainer</span>
+    <p>Brings 49 commits from <code>main</code> to <code>stable</code>, then tags <code>adp-0/v1.3.0</code> and <code>adp-v0.1.0</code> as pre-releases. Only the maintainer merges into <code>stable</code> and creates tags. Checks pass over the full range.</p></div>
+  <div class="q"><h3>#41–#43 · Check upkeep</h3><span class="chip next">Awaiting merge</span>
+    <p>Pin the shared commit check to its latest fix (#41). Let signed Dependabot updates and commits already on <code>main</code> through, so the first dependency update does not block the next release (#42). Bring the hook tests up to date and add <code>stable</code> to the local push guard (#43).</p></div>
+  <div class="q"><h3>ADP-A-010 · Contributors merge the record of a ruling</h3><span class="chip next">Awaiting decision</span>
+    <p>The maintainer would still make every ruling; a contributor could merge the pull request that writes it down, once the ruling is visible on GitHub. Four questions await the maintainer's answers.</p></div>
   <div class="q"><h3>Next · Validator for grants and authority (crate 0.2.0)</h3><span class="chip next">Planned</span>
     <p>ADP-A-008 stage 2: the 33 ADP-2 test cases, including the 19 authority cases no check runs today. No high or critical defect is open; 1 medium and 5 low remain.</p></div>
 </section>
