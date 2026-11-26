@@ -23,11 +23,33 @@ jobs:
         with:
           fetch-depth: 0
       - run: sh scripts/hooks/test
-      # A Dependabot pull request has no ADP anchor; commit-check.yml checks
-      # it under ENG-DEC-021 instead. On a push there is no pull request, so
-      # the condition holds and every pushed commit is checked.
-      - if: github.event.pull_request.user.login != 'dependabot[bot]'
-        run: sh scripts/ci/check-commits "${{ github.event.pull_request.base.sha || github.event.before }}" "${{ github.event.pull_request.head.sha || github.sha }}"
+      # A Dependabot commit has no ADP anchor. check-commits lets it through
+      # when GitHub signed it and its subject is a version bump (ENG-DEC-021);
+      # this step lists the Dependabot commits in the range that GitHub signed.
+      - name: Dependabot commits that GitHub signed
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          for sha in $(git log --no-merges --format='%H %ae' "$BASE..$HEAD" 2>/dev/null |
+              awk '$2 == "49699333+dependabot[bot]@users.noreply.github.com" { print $1 }'); do
+            gh api "repos/$GITHUB_REPOSITORY/commits/$sha" \
+              --jq 'select(.commit.verification.verified and .commit.committer.email == "noreply@github.com") | .sha'
+          done > "$RUNNER_TEMP/github-signed"
+      # Into stable, every commit already on main was checked by the pull
+      # request that brought it there, so only the rest is checked.
+      - name: Commit messages
+        env:
+          ADP_SIGNED_FILE: ${{ runner.temp }}/github-signed
+          TARGET: ${{ github.event.pull_request.base.ref || github.ref_name }}
+        run: |
+          if [ "$TARGET" = stable ]; then
+            git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+            ADP_LANDED=$(git rev-parse --verify 'refs/remotes/origin/main^{commit}') || exit 2
+            export ADP_LANDED
+          fi
+          sh scripts/ci/check-commits "${{ github.event.pull_request.base.sha || github.event.before }}" "${{ github.event.pull_request.head.sha || github.sha }}"
 
   schema:
     runs-on: ubuntu-24.04
