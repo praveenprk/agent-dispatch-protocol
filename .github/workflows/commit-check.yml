@@ -1,0 +1,23 @@
+# Shared commit check from eng-principles (ENG-STD-005 §1, ENG-DEC-009),
+# adopted by maintainer ruling on 2026-11-26. It checks the pull request
+# title, description and every non-merge commit against this project's
+# scripts/hooks/types and scripts/hooks/anchors, and lets a Dependabot
+# version bump through without an anchor (ENG-DEC-021).
+# Pinned to the full SHA of eng-principles #38's merge (colon anchors).
+name: commit-check
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  commit-check:
+    uses: praveenprk/eng-principles/.github/workflows/commit-check.yml@b7ff0ab43bbdf676692d59400fba09a1367c7532
+    with:
+      config: scripts/hooks
