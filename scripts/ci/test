@@ -16,6 +16,7 @@ trap 'rm -rf "$work"' EXIT INT TERM
 
 n=0
 failed=0
+zero=0000000000000000000000000000000000000000
 
 check() {   # check <pass | refuse> <description> <command...>
     expect=$1; desc=$2; shift 2
@@ -66,6 +67,8 @@ check refuse "duplicate ID"                           defects "$f_dup"
 check refuse "invalid Severity value"                 defects "$f_badsv"
 check refuse "new entry missing a required field"     defects "$f_miss"
 check pass   "DEFECTS.md itself untouched"            git -C "$home" diff --quiet -- DEFECTS.md
+check refuse "BASE that is not a commit"               "$py" "$src/check_defects.py" no-such-ref "$f"
+check refuse "BASE is the all-zero SHA"               "$py" "$src/check_defects.py" "$zero" "$f"
 
 # --- check-schema-gate and check-commits: throwaway repo ----------------
 cd "$work" || exit 1
@@ -118,6 +121,10 @@ git reset -q --hard "$b2"
 commit_schema "schema(dispatch): proposal does not exist — ADP-A-009"
 check refuse "missing proposal file"                         gate "$b2"
 git reset -q --hard "$b2"
+check refuse "BASE that is not a commit"                     gate no-such-ref
+check refuse "BASE is the all-zero SHA"                      gate "$zero"
+check refuse "BASE is empty"                                 gate ""
+check refuse "HEAD that is not a commit"                     sh scripts/ci/check-schema-gate "$base" no-such-ref
 
 echo "# check-commits"
 check pass   "conforming commits in range"                   commits "$base"
@@ -126,6 +133,10 @@ check refuse "non-conforming subject in range"               commits "$base"
 git reset -q --hard "$b2"
 git commit -q --allow-empty -m "docs(adp-1): attribution sneaks in — ADP-1" -m "Co-authored-by: x <x@y>" --no-verify
 check refuse "co-author line in range"                       commits "$base"
+check refuse "BASE that is not a commit"                     commits no-such-ref
+check refuse "BASE is the all-zero SHA"                      commits "$zero"
+check refuse "BASE is empty"                                 commits ""
+check refuse "HEAD that is not a commit"                     sh scripts/ci/check-commits "$base" no-such-ref
 
 printf '1..%d\n' "$n"
 [ "$failed" -eq 0 ]
