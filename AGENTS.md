@@ -68,7 +68,7 @@ repository. Report what a check printed, not what it should print.
 | Push to `main` only via PR; merge commits only; no force-push or deletion of `main` | GitHub ruleset `adp-ruleset` |
 | `stable` changes only by PR, merge commits only, same checks; no force-push or deletion | GitHub ruleset `stable-integrity` |
 | Security-related changes carry the `security` label and are merged by the maintainer (ADP-0 §8.1) | Label; the agent's local merge guard; review |
-| Commit format, anchor resolves, no attribution lines | `scripts/hooks/commit-msg`; CI job `commits` |
+| Commit format, anchor resolves, no attribution lines | `scripts/hooks/commit-msg`; CI jobs `commits` and `commit-check / check` (eng-principles shared check; also checks the pull request title and description) |
 | No push to `main`, no force-push, no remote deletion (local guardrail) | `scripts/hooks/pre-push` |
 | Schemas pass the metaschema; examples validate | CI job `schema` |
 | `schema/` changes need an ACCEPTED proposal | CI job `schema` (`scripts/ci/check-schema-gate`) |

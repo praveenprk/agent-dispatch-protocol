@@ -21,7 +21,11 @@ jobs:
         with:
           fetch-depth: 0
       - run: sh scripts/hooks/test
-      - run: sh scripts/ci/check-commits "${{ github.event.pull_request.base.sha || github.event.before }}" "${{ github.event.pull_request.head.sha || github.sha }}"
+      # A Dependabot pull request has no ADP anchor; commit-check.yml checks
+      # it under ENG-DEC-021 instead. On a push there is no pull request, so
+      # the condition holds and every pushed commit is checked.
+      - if: github.event.pull_request.user.login != 'dependabot[bot]'
+        run: sh scripts/ci/check-commits "${{ github.event.pull_request.base.sha || github.event.before }}" "${{ github.event.pull_request.head.sha || github.sha }}"
 
   schema:
     runs-on: ubuntu-24.04
