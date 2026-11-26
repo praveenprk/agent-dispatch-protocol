@@ -2,18 +2,24 @@
 # commit-msg — enforce AGENTS.md "Commits" on the subject line:
 #   type(scope): description — ANCHOR[, ANCHOR...]
 # Every anchor must resolve to a governed entry (see ./anchors).
-# Any co-authored-by line is refused.
+# Any co-authored-by line or tool attribution line ("Generated with [Tool](…)")
+# is refused (ENG-STD-005 §1.4; stricter than required).
 #
-# Adapted from eng-principles hooks/commit-msg @ c2a3c05 (ENG-STD-005 §1).
-# Change: an anchor line may also end in ':' (e.g. '# ADP-1: Title').
+# Copied from eng-principles hooks/commit-msg @ b7ff0ab, the version the
+# shared check (.github/workflows/commit-check.yml) runs. Only this header
+# differs; take upstream changes by copying the file again.
 #
 # Substrate: POSIX sh, git, grep, sed, awk, tr.
-# Config (plain text, next to this file): types, anchors.
+# Config (plain text): types, anchors. Read from $ENG_HOOKS_CONFIG if set,
+# else from the directory of this file.
+# Issue anchors (#N): allowed when `anchors` has an ISSUE line. With
+# $ENG_ISSUES_FILE set (one number per line, as the host lists them), #N
+# must be listed there; without it (offline), #N is accepted.
 # Exit: 0 accepted, 1 refused (reason on stderr).
 
 set -u
 
-dir=$(dirname "$0")
+dir=${ENG_HOOKS_CONFIG:-$(dirname "$0")}
 msgfile=$1
 
 refuse() {
@@ -25,7 +31,7 @@ refuse() {
 
 root=$(git rev-parse --show-toplevel) || refuse "not inside a git work tree"
 
-[ -r "$dir/types" ]   || refuse "missing config: $dir/types"
+[ -r "$dir/types" ] || refuse "missing config: $dir/types"
 [ -r "$dir/anchors" ] || refuse "missing config: $dir/anchors"
 
 # Body without git comment lines.
@@ -39,7 +45,11 @@ case $subject in
 esac
 
 if printf '%s\n' "$body" | grep -qi 'co-authored[- ]by'; then
-    refuse "co-author line present" "accountability belongs to the human who signs"
+    refuse "co-author line present" "accountability belongs to the human who signs (ENG-P-11)"
+fi
+
+if printf '%s\n' "$body" | grep -qiE '^[^[:alnum:]]*generated (with|by) \[[^]]+\]\('; then
+    refuse "tool attribution line present" "accountability belongs to the human who signs (ENG-P-11)"
 fi
 
 types=$(grep -v '^#' "$dir/types" | grep . | paste -sd'|' -)
@@ -53,12 +63,23 @@ fi
 
 case $subject in
     *" — "*) refs=${subject##* — } ;;
-    *)       refs=${subject##* - } ;;
+    *) refs=${subject##* - } ;;
 esac
 
 anchors=$(printf '%s\n' "$refs" | tr -cs 'A-Z0-9-' '\n' | grep -E '^[A-Z]+(-[A-Z]+)*(-[0-9]+)+$')
 
-[ -n "$anchors" ] || refuse "no anchor" "got: $refs"
+issues=
+if awk '!/^#/ && $1 == "ISSUE" { f = 1 } END { exit !f }' "$dir/anchors"; then
+    issues=$(printf '%s\n' "$refs" | grep -oE '#[0-9]+' | tr -d '#')
+fi
+
+[ -n "$anchors$issues" ] || refuse "no anchor" "got: $refs"
+
+for issue in $issues; do
+    if [ -n "${ENG_ISSUES_FILE:-}" ] && ! grep -qx "$issue" "$ENG_ISSUES_FILE"; then
+        refuse "anchor not found: #$issue" "not an issue or pull request of this repository"
+    fi
+done
 
 for anchor in $anchors; do
     type=$(printf '%s\n' "$anchor" | sed 's/-[0-9].*$//')
@@ -69,7 +90,7 @@ for anchor in $anchors; do
     found=no
     while read -r files prefix; do
         if [ "$files" = "-" ]; then
-            found=yes   # exempt type: existence not checked
+            found=yes # exempt type (e.g. INV): existence not checked
             break
         fi
         for file in $root/$files; do
@@ -79,7 +100,7 @@ for anchor in $anchors; do
                 break 2
             fi
         done
-    done <<EOF
+    done << EOF
 $sources
 EOF
 

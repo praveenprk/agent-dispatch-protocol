@@ -74,6 +74,8 @@ check "format"               "missing scope"                     msg "spec: add 
 check "format"               "unknown type"                      msg "feature(adp-1): add the key words section — ADP-1"
 check "format"               "description too short"             msg "spec(adp-1): short — ADP-1"
 check "co-author"            "co-author line"                    msg "spec(adp-1): add the key words section — ADP-1" "" "Co-authored-by: x <x@y>"
+check "tool attribution"     "tool attribution line"             msg "spec(adp-1): add the key words section — ADP-1" "" "Generated with [Tool](https://example.com)"
+check "no anchor"            "issue anchor without ISSUE source" msg "fix(schema): accept unknown minor fields — #12"
 check "empty message"        "empty message"                     msg ""
 
 # Commits for pre-push: a -> b, and c on a side branch from a.
