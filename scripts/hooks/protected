@@ -1,2 +1,3 @@
 # Refs only the maintainer pushes to (AGENTS.md "Roles"). One per line.
 refs/heads/main
+refs/heads/stable
