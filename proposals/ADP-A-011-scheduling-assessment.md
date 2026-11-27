@@ -306,8 +306,8 @@ candidate is drafted. This proposal asks only:
 
 | # | Question | Recommendation (setting and reason) | Maintainer answer | Effect on this draft |
 |---|----------|-------------------------------------|-------------------|----------------------|
-| Q1 | Which candidates should be drafted? | **C6, then C7 with the C8 and C10 notes. Defer C9.** C6 closes a real gap at the boundary ADP owns. C7 makes the S2 audit question answerable without a schema change. C8 and C10 need no change. C9 needs a runtime first. | | |
-| Q2 | Is the boundary right: ADP carries what crosses the envelope and forbids self-scheduling, and leaves policy to the orchestrator? | **Yes.** It follows ADP-1 §2 and §11 and keeps ADP vendor-neutral. | | |
+| Q1 | Which candidates should be drafted? | **C6, then C7 with the C8 and C10 notes. Defer C9.** C6 closes a real gap at the boundary ADP owns. C7 makes the S2 audit question answerable without a schema change. C8 and C10 need no change. C9 needs a runtime first. | Draft C6 and the C7 note (2026-11-28). | C6 and C7 are drafted as separate proposals (ADP-0 §5.1). The C8 and C10 notes were not named in the answer and are not drafted. C9 stays deferred. |
+| Q2 | Is the boundary right: ADP carries what crosses the envelope and forbids self-scheduling, and leaves policy to the orchestrator? | **Yes.** It follows ADP-1 §2 and §11 and keeps ADP vendor-neutral. | Yes (2026-11-28). | None. The candidates keep this boundary. |
 
 ---
 
