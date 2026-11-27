@@ -67,6 +67,14 @@ dates on `main`.
 
 | Date | PR | Kind | Change | Versions |
 |------|----|------|--------|----------|
+| 2026-11-27 | #39 | CI | The `adp` checks also run on pull requests into `stable`, so a release pull request gets the checks `stable-integrity` requires. | — |
+| 2026-11-26 | #37 | Tooling | `scripts/hooks/commit-msg` matches the shared check's version (eng-principles `b7ff0ab`): a tool attribution line is refused, and config may come from `ENG_HOOKS_CONFIG`. | — |
+| 2026-11-26 | #38 | CI | eng-principles' shared commit check adopted (`commit-check.yml`, pinned to `b7ff0ab`). It also checks the pull request title and description. The `commits` job skips Dependabot pull requests. Replaces #36. | — |
+| 2026-11-26 | #35 | Proposal | ADP-A-010 drafted: contributors merge a pull request that only records a ruling the maintainer made on GitHub. Not yet decided. | — |
+| 2026-11-26 | #34 | CI | The `adp` checks also run on pushes to `main` and `stable`. Replaces #31. | — |
+| 2026-11-26 | #33 | CI | `check-commits`, `check-schema-gate` and `check_defects.py` refuse a commit range that does not resolve, instead of passing it. 10 self-test cases. | — |
+| 2026-11-26 | #32 | Tooling | Dependabot for GitHub Actions and the Rust crate, weekly. | — |
+| 2026-11-26 | #30 | Docs | `SECURITY.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1), pull request template and issue forms. | — |
 | 2026-11-26 | #29 | Apply | ADP-A-008 stage 1: Implementation class in ADP-0; Rust crate `adp` at `impl/rust/` passes all 68 ADP-1 vectors with the exact rule; CI job `implementation`; README points to the crate. | ADP-0 1.3.0, crate 0.1.0 |
 | 2026-11-22 | #24 | Proposal | ADP-A-008 drafted and ACCEPTED: Rust reference implementation at `impl/rust/`, new Implementation class in ADP-0 (1.3.0 when applied). Reconciled with ADP-0 1.2.0 before merge. | — |
 | 2026-11-22 | #26 | Apply | ADP-A-009: contributors merge straightforward changes into `main` (ADP-0 §8.1); releases on `stable` (§8.2). AGENTS.md roles and enforcement updated. | ADP-0 1.2.0 |
