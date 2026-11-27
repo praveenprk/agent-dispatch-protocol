@@ -370,8 +370,8 @@ Evidence    : At 49bf19f6297e3bbf3d694dc49e7758080e255ee9:
               `grep -n 'python/adp' README.md`
               `ls python` → No such file or directory
 Severity    : LOW
-Status      : OPEN
-Resolved by : —
+Status      : RESOLVED
+Resolved by : ADP-A-008, f6137f0
 Notes       : README is informative (ADP-0 §3). The tree describes
               intended layout, not actual layout; it also omits
               `proposals/`, `conformance/`, `DEFECTS.md` defined by
@@ -492,8 +492,8 @@ Evidence    : At 12e644b:
               `grep -n "ADP-1.md \|created by first" spec/ADP-0.md` → lines 371, 373
               `ls spec conformance`
 Severity    : LOW
-Status      : OPEN
-Resolved by : —
+Status      : RESOLVED
+Resolved by : ADP-A-008, 8dcee38
 Notes       : ADP-0 §4.4 has no row for process documents. Graded as
               the "Informative artifact contradicts normative text"
               row, because the layout describes files and binds no
