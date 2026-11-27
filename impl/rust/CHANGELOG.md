@@ -7,7 +7,7 @@ crate follows Semantic Versioning on its own line (ADP-A-008 C2.1).
 Each release names the spec versions it implements. The specs have their
 own history in the root `CHANGELOG.md`.
 
-## [0.1.0] - unreleased (date set when the maintainer tags `adp-v0.1.0`)
+## [0.1.0] - 2026-11-28
 
 **Implements:** ADP-1 1.1.1
 

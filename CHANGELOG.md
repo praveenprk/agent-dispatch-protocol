@@ -15,10 +15,10 @@ repository since its first commit. Newest first.
 
 | Document | Version | Tag |
 |----------|---------|-----|
-| ADP-0 Governance | 1.3.0 | `adp-0/v1.3.0` (when released) |
+| ADP-0 Governance | 1.3.0 | `adp-0/v1.3.0` |
 | ADP-1 Agent Dispatch Protocol | 1.1.1 | `adp-1/v1.1.1` |
 | ADP-2 Dispatch Authority | 2.0.1 | `adp-2/v2.0.1` |
-| Rust crate `adp` | 0.1.0 | `adp-v0.1.0` (when released) |
+| Rust crate `adp` | 0.1.0 | `adp-v0.1.0` |
 
 ---
 
@@ -41,6 +41,9 @@ repository since its first commit. Newest first.
 | 1.0.0 | 2026-11-16 | — | Initial Draft: approval-rooted, session-bound grants; human signature for creating or deleting a codebase; approval and merge stay human. | — | — | ADP-A-002 | #8, #10, #17 |
 
 ## ADP-0: Governance
+
+Version 1.2.0 has no tag of its own. It reached `stable` together with
+1.3.0, so `adp-0/v1.3.0` includes it (maintainer ruling, 2026-11-28).
 
 | Version | Date | Bump | Change | Upgrade impact | Defects closed | Proposal | PR |
 |---------|------|------|--------|----------------|----------------|----------|----|
