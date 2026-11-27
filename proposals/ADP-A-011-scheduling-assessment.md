@@ -313,3 +313,4 @@ candidate is drafted. This proposal asks only:
 
 ## Decision
 
+ACCEPTED 2026-11-28. Draft C6 (ADP-A-012) and the C7 note (ADP-A-013) as separate proposals; C8 and C10 not drafted, C9 deferred. Boundary confirmed (Q2).
