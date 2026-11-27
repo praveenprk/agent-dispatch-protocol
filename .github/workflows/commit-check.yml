@@ -3,7 +3,9 @@
 # title, description and every non-merge commit against this project's
 # scripts/hooks/types and scripts/hooks/anchors, and lets a Dependabot
 # version bump through without an anchor (ENG-DEC-021).
-# Pinned to the full SHA of eng-principles #38's merge (colon anchors).
+# Pinned to the full SHA of eng-principles #43's merge: since then a pull
+# request into a branch other than main does not re-check commits already
+# on main (#38 before it: an anchor heading may end in a colon).
 name: commit-check
 
 on:
@@ -18,6 +20,6 @@ permissions:
 
 jobs:
   commit-check:
-    uses: praveenprk/eng-principles/.github/workflows/commit-check.yml@b7ff0ab43bbdf676692d59400fba09a1367c7532
+    uses: praveenprk/eng-principles/.github/workflows/commit-check.yml@f8743aa8e937e2a562678fdeb3a7d49529863fa7
     with:
       config: scripts/hooks
