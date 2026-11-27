@@ -16,10 +16,15 @@ Once per clone, before the first commit: `scripts/hooks/install`.
 
 ## Roles
 
-- Only the maintainer pushes to `main`, merges, and records proposal
-  decisions (ADP-0 §5.3, §8).
-- Contributors file defects with evidence (ADP-0 §4.3) and author
-  proposals (ADP-0 §5.1). They do not merge or decide.
+- Nobody pushes to `main` or `stable`. Every change arrives by pull
+  request into `main`.
+- Contributors file defects with evidence (ADP-0 §4.3), author
+  proposals (ADP-0 §5.1), and merge into `main` when ADP-0 §8.1
+  allows: checks pass, nothing is asked of the maintainer, no
+  decision is recorded, and the change is not security-related.
+- Only the maintainer records decisions (ADP-0 §5.3), merges
+  security-related changes (label `security`), merges `main` into
+  `stable`, and tags releases on `stable` (ADP-0 §8.2).
 
 ## Branches
 
@@ -61,8 +66,10 @@ repository. Report what a check printed, not what it should print.
 | Rule | Mechanism |
 |------|-----------|
 | Push to `main` only via PR; merge commits only; no force-push or deletion of `main` | GitHub ruleset `adp-ruleset` |
-| Commit format, anchor resolves, no attribution lines | `scripts/hooks/commit-msg`; CI job `commits` |
-| No push to `main`, no force-push, no remote deletion (local guardrail) | `scripts/hooks/pre-push` |
+| `stable` changes only by PR, merge commits only, same checks; no force-push or deletion | GitHub ruleset `stable-integrity` |
+| Security-related changes carry the `security` label and are merged by the maintainer (ADP-0 §8.1) | Label; the agent's local merge guard; review |
+| Commit format, anchor resolves, no attribution lines | `scripts/hooks/commit-msg`; CI jobs `commits` and `commit-check / check` (eng-principles shared check; also checks the pull request title and description) |
+| No push to `main` or `stable`, no force-push, no remote deletion (local guardrail) | `scripts/hooks/pre-push` |
 | Schemas pass the metaschema; examples validate | CI job `schema` |
 | `schema/` changes need an ACCEPTED proposal | CI job `schema` (`scripts/ci/check-schema-gate`) |
 | Conformance vectors follow ADP-0 §5.6, cover every rule, and match the schemas | CI job `schema` (`scripts/ci/check_conformance.py`) |

@@ -1,0 +1,15 @@
+[package]
+name = "adp"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "Reference validator for the Agent Dispatch Protocol (ADP)"
+repository = "https://github.com/praveenprk/agent-dispatch-protocol"
+readme = "README.md"
+keywords = ["adp", "agents", "validation", "protocol"]
+categories = ["encoding", "parser-implementations"]
+publish = false
+
+[dependencies]
+serde_json = "1"

@@ -16,6 +16,7 @@ trap 'rm -rf "$work"' EXIT INT TERM
 
 n=0
 failed=0
+zero=0000000000000000000000000000000000000000
 
 check() {   # check <pass | refuse> <description> <command...>
     expect=$1; desc=$2; shift 2
@@ -66,6 +67,8 @@ check refuse "duplicate ID"                           defects "$f_dup"
 check refuse "invalid Severity value"                 defects "$f_badsv"
 check refuse "new entry missing a required field"     defects "$f_miss"
 check pass   "DEFECTS.md itself untouched"            git -C "$home" diff --quiet -- DEFECTS.md
+check refuse "BASE that is not a commit"               "$py" "$src/check_defects.py" no-such-ref "$f"
+check refuse "BASE is the all-zero SHA"               "$py" "$src/check_defects.py" "$zero" "$f"
 
 # --- check-schema-gate and check-commits: throwaway repo ----------------
 cd "$work" || exit 1
@@ -118,6 +121,10 @@ git reset -q --hard "$b2"
 commit_schema "schema(dispatch): proposal does not exist — ADP-A-009"
 check refuse "missing proposal file"                         gate "$b2"
 git reset -q --hard "$b2"
+check refuse "BASE that is not a commit"                     gate no-such-ref
+check refuse "BASE is the all-zero SHA"                      gate "$zero"
+check refuse "BASE is empty"                                 gate ""
+check refuse "HEAD that is not a commit"                     sh scripts/ci/check-schema-gate "$base" no-such-ref
 
 echo "# check-commits"
 check pass   "conforming commits in range"                   commits "$base"
@@ -126,6 +133,34 @@ check refuse "non-conforming subject in range"               commits "$base"
 git reset -q --hard "$b2"
 git commit -q --allow-empty -m "docs(adp-1): attribution sneaks in — ADP-1" -m "Co-authored-by: x <x@y>" --no-verify
 check refuse "co-author line in range"                       commits "$base"
+check refuse "BASE that is not a commit"                     commits no-such-ref
+check refuse "BASE is the all-zero SHA"                      commits "$zero"
+check refuse "BASE is empty"                                 commits ""
+check refuse "HEAD that is not a commit"                     sh scripts/ci/check-commits "$base" no-such-ref
+
+echo "# check-commits: ADP_LANDED and Dependabot"
+git reset -q --hard "$b2"
+git commit -q --allow-empty -m "spec: old format subject — ADP-1" --no-verify
+bad=$(git rev-parse HEAD)
+check pass   "bad commit already on main is not re-checked"  env ADP_LANDED="$bad" sh scripts/ci/check-commits "$base" HEAD
+check refuse "bad commit not yet on main is checked"         env ADP_LANDED="$b2" sh scripts/ci/check-commits "$base" HEAD
+check refuse "ADP_LANDED that is not a commit"               env ADP_LANDED=no-such-ref sh scripts/ci/check-commits "$base" HEAD
+git reset -q --hard "$b2"
+dbot() { git -c user.name='dependabot[bot]' -c user.email='49699333+dependabot[bot]@users.noreply.github.com' commit -q --allow-empty -m "$1" --no-verify; git rev-parse HEAD; }
+d1=$(dbot "chore(deps): bump serde_json from 1.0.140 to 1.0.141 in /impl/rust")
+git rev-parse HEAD > "$work/signed"
+check pass   "signed Dependabot bump needs no anchor"        env ADP_SIGNED_FILE="$work/signed" sh scripts/ci/check-commits "$b2" HEAD
+check refuse "Dependabot bump without a signed list"         commits "$b2"
+: > "$work/unsigned"
+check refuse "Dependabot bump not listed as signed"          env ADP_SIGNED_FILE="$work/unsigned" sh scripts/ci/check-commits "$b2" HEAD
+git reset -q --hard "$b2"
+d2=$(dbot "chore(deps): something else entirely")
+git rev-parse HEAD > "$work/signed"
+check refuse "signed Dependabot commit without bump shape"   env ADP_SIGNED_FILE="$work/signed" sh scripts/ci/check-commits "$b2" HEAD
+git reset -q --hard "$b2"
+git commit -q --allow-empty -m "chore(deps): bump serde_json from 1.0.140 to 1.0.141 in /impl/rust" --no-verify
+git rev-parse HEAD > "$work/signed"
+check refuse "bump shape by another author"                  env ADP_SIGNED_FILE="$work/signed" sh scripts/ci/check-commits "$b2" HEAD
 
 printf '1..%d\n' "$n"
 [ "$failed" -eq 0 ]

@@ -3,8 +3,14 @@
 name: adp
 
 on:
+  # Pull requests into stable are releases (ADP-0 §8.2); stable-integrity
+  # requires the same jobs, so they run there too.
   pull_request:
-    branches: [main]
+    branches: [main, stable]
+  # Pushes to the protected branches arrive only by merge. Checking them
+  # shows each branch's own health: BASE..HEAD is the push's before..after.
+  push:
+    branches: [main, stable]
 
 permissions:
   contents: read
@@ -17,7 +23,33 @@ jobs:
         with:
           fetch-depth: 0
       - run: sh scripts/hooks/test
-      - run: sh scripts/ci/check-commits "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}"
+      # A Dependabot commit has no ADP anchor. check-commits lets it through
+      # when GitHub signed it and its subject is a version bump (ENG-DEC-021);
+      # this step lists the Dependabot commits in the range that GitHub signed.
+      - name: Dependabot commits that GitHub signed
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          for sha in $(git log --no-merges --format='%H %ae' "$BASE..$HEAD" 2>/dev/null |
+              awk '$2 == "49699333+dependabot[bot]@users.noreply.github.com" { print $1 }'); do
+            gh api "repos/$GITHUB_REPOSITORY/commits/$sha" \
+              --jq 'select(.commit.verification.verified and .commit.committer.email == "noreply@github.com") | .sha'
+          done > "$RUNNER_TEMP/github-signed"
+      # Into stable, every commit already on main was checked by the pull
+      # request that brought it there, so only the rest is checked.
+      - name: Commit messages
+        env:
+          ADP_SIGNED_FILE: ${{ runner.temp }}/github-signed
+          TARGET: ${{ github.event.pull_request.base.ref || github.ref_name }}
+        run: |
+          if [ "$TARGET" = stable ]; then
+            git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+            ADP_LANDED=$(git rev-parse --verify 'refs/remotes/origin/main^{commit}') || exit 2
+            export ADP_LANDED
+          fi
+          sh scripts/ci/check-commits "${{ github.event.pull_request.base.sha || github.event.before }}" "${{ github.event.pull_request.head.sha || github.sha }}"
 
   schema:
     runs-on: ubuntu-24.04
@@ -31,7 +63,7 @@ jobs:
       - run: python -m pip install --quiet jsonschema==4.26.0 pyyaml==6.0.3
       - run: python scripts/ci/check_schema.py
       - run: python scripts/ci/check_conformance.py
-      - run: sh scripts/ci/check-schema-gate "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}"
+      - run: sh scripts/ci/check-schema-gate "${{ github.event.pull_request.base.sha || github.event.before }}" "${{ github.event.pull_request.head.sha || github.sha }}"
 
   defects:
     runs-on: ubuntu-24.04
@@ -43,4 +75,22 @@ jobs:
         with:
           python-version: "3.12"
       - run: sh scripts/ci/test python
-      - run: python scripts/ci/check_defects.py "${{ github.event.pull_request.base.sha }}"
+      - run: python scripts/ci/check_defects.py "${{ github.event.pull_request.base.sha || github.event.before }}"
+
+  implementation:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: impl/rust
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: rustup toolchain install 1.99.0 --profile minimal --component rustfmt,clippy
+      - run: rustup override set 1.99.0
+      - run: cargo fmt --check
+      - run: cargo clippy --locked --all-targets -- -D warnings
+      - run: cargo test --locked
+      - run: cargo doc --locked --no-deps
+        env:
+          RUSTDOCFLAGS: -D warnings
+      - run: rustup toolchain install 1.85.0 --profile minimal
+      - run: cargo +1.85.0 test --locked   # MSRV, ADP-A-008 C2.1(e)

@@ -9,7 +9,8 @@
 # 'ACCEPTED | REJECTED | DEFERRED' is not a decision.
 #
 # Usage: scripts/ci/check-schema-gate BASE [HEAD]
-# Substrate: POSIX sh, git, grep, awk, tr. Exit: 0 pass, 1 refused. Quiet on success.
+# Substrate: POSIX sh, git, grep, awk, tr. Exit: 0 pass, 1 refused, 2 usage or
+# a range that does not resolve. Quiet on success.
 
 set -u
 
@@ -17,6 +18,19 @@ set -u
 base=$1
 head=${2:-HEAD}
 root=$(git rev-parse --show-toplevel) || exit 2
+
+# Fail closed: a range git cannot resolve would make rev-list print an
+# error and the loop below run zero times, which would read as a pass.
+# The all-zero SHA is what a push that creates a branch gives as BASE.
+for ref in "$base" "$head"; do
+    case $ref in
+        '' | *[!0]*) ;;
+        *) printf '%s: %s is the all-zero SHA: no range to check\n' "$(basename "$0")" "$ref" >&2; exit 2 ;;
+    esac
+    git rev-parse --verify --quiet "$ref^{commit}" >/dev/null ||
+        { printf '%s: cannot resolve %s to a commit\n' "$(basename "$0")" "${ref:-(empty)}" >&2; exit 2; }
+done
+commits=$(git rev-list --no-merges --reverse "$base..$head") || exit 2
 
 accepted() {   # accepted ADP-A-NNN -> 0 if a proposal file records ACCEPTED
     for f in "$root"/proposals/"$1"-*.md; do
@@ -32,7 +46,7 @@ accepted() {   # accepted ADP-A-NNN -> 0 if a proposal file records ACCEPTED
 }
 
 failed=0
-for c in $(git rev-list --no-merges --reverse "$base..$head"); do
+for c in $commits; do
     git diff-tree --no-commit-id --name-only -r "$c" -- schema/ | grep -q . || continue
     subject=$(git log -1 --format=%s "$c")
     ok=no
