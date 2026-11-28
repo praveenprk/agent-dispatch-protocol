@@ -155,10 +155,10 @@ they stay valid: the keys and types do not change.
 
 | # | Question | Recommendation (setting and reason) | Maintainer answer | Effect on this draft |
 |---|----------|-------------------------------------|-------------------|----------------------|
-| Q1 | Scope: (A) the `contextos` name only, or (B) every project-specific identifier and description (C3, full table)? | **(B).** The examples name the private project's specs, kernel axioms, design documents and seven design decisions. Removing only the name leaves the design readable | | |
-| Q2 | Neutral subject? | **A refund flow in an orders service, `SPEC-001`, `x-example-seam`.** Familiar to any reader, and `example` follows RFC 2606 | | |
-| Q3 | `DEFECTS.md` and decided proposals (ADP-A-007): leave as they are? | **Leave them (A2, A3).** Both are records. The register's own rules forbid the edit. The quoted text is evidence of what the spec said at a pinned commit | | |
-| Q4 | Git history, tags and Releases: leave? | **Leave them (A4).** This proposal changes current text only. A rewrite would break the evidence chain and the signed tags | | |
+| Q1 | Scope: (A) the `contextos` name only, or (B) every project-specific identifier and description (C3, full table)? | **(B).** The examples name the private project's specs, kernel axioms, design documents and seven design decisions. Removing only the name leaves the design readable | (B): every project-specific identifier and description (2026-11-28). | C3 applies in full, every row of its table. |
+| Q2 | Neutral subject? | **A refund flow in an orders service, `SPEC-001`, `x-example-seam`.** Familiar to any reader, and `example` follows RFC 2606 | Refund flow in an orders service, `SPEC-001`, `x-example-seam` (2026-11-28). | None. C1 to C3 already use this subject. |
+| Q3 | `DEFECTS.md` and decided proposals (ADP-A-007): leave as they are? | **Leave them (A2, A3).** Both are records. The register's own rules forbid the edit. The quoted text is evidence of what the spec said at a pinned commit | Leave `DEFECTS.md` and ADP-A-007 as they are (2026-11-28). | None. Neither is changed (A2, A3). |
+| Q4 | Git history, tags and Releases: leave? | **Leave them (A4).** This proposal changes current text only. A rewrite would break the evidence chain and the signed tags | Leave git history, tags and Releases as they are (2026-11-28). | None. Current text only (A4). |
 
 ---
 
