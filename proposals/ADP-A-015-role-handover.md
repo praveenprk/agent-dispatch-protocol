@@ -275,7 +275,7 @@ they have no vectors.
    wants a schema for the new document. It needs the ACCEPTED Decision
    (CI job `schema`).
 4. **IMPLEMENTATION:** `validate_binding` in the crate when it
-   implements ADP-2 (crate 0.2.0, ADP-A-008). A Kimi task spec follows
+   implements ADP-2 (crate 0.2.0, ADP-A-008). An implementation task follows
    acceptance.
 5. **INFORMATIVE:** a CHANGELOG row for the ADP-2 version.
 6. **REGISTER:** none.
