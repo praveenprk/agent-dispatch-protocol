@@ -39,18 +39,19 @@ talk during the handover, but they never both hold the role.
 | S4 | Two new sessions each receive a binding that supersedes the same old one | Both would act as reviewer | The binding signed second names a binding that is no longer current, so it fails G-13 and only one holds the role |
 | S5 | The old session records one more verdict after the new binding is signed | The verdict would count | The verdict carries the old binding's id, which is no longer current, so the runtime refuses it (§6) |
 | S6 | An agent edits the file where the runtime looks up the current holder | Nothing in the spec prevents it | ADP-2 G-7 already protects that file: it is part of the enforcing runtime. C2 makes the binding itself something no agent can confer |
+| S7 | A binding arrives signed by a human who is not authorised for the role, or with a signature nobody has checked | A non-empty signature field would be enough | The runtime verifies the signature against the keys authorised for that role and refuses the binding (C6 duty 3) |
 
 ---
 
 ## Anchor
 
-The maintainer asked, through engineering-fa on 2026-11-28, for the
-handover of the master-reviewer role to be specified as an ADP proposal
-with test vectors, and set four requirements:
+The maintainer asked on 2026-11-28 for the handover of a single-holder
+reviewer role to be specified as an ADP proposal with test vectors. The
+drafter reads the request as setting these requirements:
 
 | # | Requirement | Where this draft meets it |
 |---|-------------|---------------------------|
-| R1 | Only the maintainer binds the role | C2 (not an automation type), G-12 (human-signed) |
+| R1 | Only the maintainer binds the role | C2 (not an automation type), G-12 (signature present), C6 duty 3 (signature verified against a key authorised for the role) |
 | R2 | A peer message is never an approval | C4 §4.4 last paragraph, C6 runtime duty 3 |
 | R3 | Two masters never run at once | G-13 (no fork), C6 runtime duties 1 and 2 (fencing) |
 | R4 | Security is in the core of the design, not added afterwards | R1 to R3 are rules (G-12, G-13) and runtime duties (§6). None of them is only advice |
@@ -173,8 +174,9 @@ After:
 >   2.0.0 version whose major version the validator implements.
 > - **G-13** When a current binding for the same role is given, the new
 >   binding's `supersedes` MUST equal that binding's `id`. When none is
->   given, `supersedes` MUST be absent. A binding that supersedes any
->   other binding would create two holders, so it is invalid.
+>   given, `supersedes` MUST be absent. A binding whose `supersedes`
+>   names any binding other than the current one is invalid: it would
+>   fork the chain.
 
 ### C6: §6, Validation and enforcement
 
@@ -191,10 +193,14 @@ Under **Runtime**, add after the first sentence:
 > 2. requires every role act to carry the id of the binding it is made
 >    under, and refuses the act when that id is not the current
 >    binding's id, even if it comes from the right session;
-> 3. changes the current binding only by recording a binding that is
->    signed by a human and passes `validate_binding`. It never changes
->    the current binding because of a message from a session;
-> 4. stores the current binding where G-7 protects it.
+> 3. changes the current binding only by recording a binding that
+>    passes `validate_binding` and whose signature it has verified
+>    against the key of a human authorised to bind that role. A
+>    present signature is not enough (G-12 checks only presence, as
+>    the validators do for every signature). It never changes the
+>    current binding because of a message from a session;
+> 4. stores the current binding, and the list of humans authorised to
+>    bind each role with their keys, where G-7 protects them.
 
 ### C7: header and Revision Log
 
@@ -262,6 +268,7 @@ they have no vectors.
 | Q2 | Is the holder's reply (step 3) a condition for signing? | **No, a duty but not a condition (A5).** Otherwise a crashed holder leaves the role stuck. A missing reply is reported | OPEN | Yes: step 4 waits for the reply, and S3 becomes "the role stays with the crashed holder" |
 | Q3 | Scope: any role a runtime defines, or only the reviewer? | **Any role.** The rules do not depend on what the role does. The reviewer is the first use | OPEN | Reviewer only: C1 names the role, and `binding.role` becomes the constant `reviewer` |
 | Q4 | Numbering, if ADP-A-012 is accepted too | **Number by order of application (ADP-0 §5.4).** If ADP-A-012 is applied first, this becomes ADP-2 2.2.0 and its rules stay G-12 and G-13. If ADP-A-012 is not accepted, they become G-11 and G-12 | OPEN | None, apart from the numbers |
+| Q5 | Retiring a role with no successor | **Out of scope here.** Every binding in this draft hands the role to a session. A role that ends with no holder needs its own document and rule, and nothing needs it yet. A later proposal can add it | OPEN | In scope: a fifth field or a separate retirement document, one more rule and its vectors |
 
 ---
 
