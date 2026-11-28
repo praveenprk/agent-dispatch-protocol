@@ -73,26 +73,13 @@ assert!(verdict.is_valid());
 its rule (`V-13`) and a JSON Pointer to the field. The crate is in
 [`impl/rust/`](impl/rust/).
 
-## Project Structure
+## Layout
 
-```
-adp-protocol/
-├── spec/ADP-1.md              # Protocol specification
-├── spec/ADP-2.md              # Dispatch authority (grants, Draft)
-├── schema/
-│   ├── dispatch.schema.json   # Dispatch envelope schema
-│   ├── grant.schema.json      # Grant document schema (ADP-2 §4)
-│   ├── record.schema.json     # Codebase event record schema (ADP-2 §4.3)
-│   └── report.schema.json     # Report envelope schema
-├── conformance/               # Conformance vectors (ADP-0 §5.6)
-├── impl/rust/                 # Rust reference implementation
-├── examples/                  # Tier 1, 2, 3 examples
-└── LICENSE
-```
+The repository layout is defined in [ADP-0 §9](spec/ADP-0.md#9-repository-layout).
 
 ## Status
 
-Pre-release. Spec finalized. Schemas published.
+Pre-release. Every document is a Draft. Schemas published.
 
 The reference implementation, crate `adp` 0.1.0, claims ADP-1 1.1.1: it
 passes every ADP-1 conformance vector with the exact rule. ADP-2 follows
